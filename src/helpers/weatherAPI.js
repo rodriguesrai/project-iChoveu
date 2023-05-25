@@ -2,16 +2,21 @@
 const TOKEN = import.meta.env.VITE_TOKEN;
 
 export const searchCities = (term) => {
-  fetch(`http://api.weatherapi.com/v1/search.json?key=${TOKEN}&q=${term}&aqi=no`)
+  return fetch(`http://api.weatherapi.com/v1/search.json?key=${TOKEN}&q=${term}&aqi=no`)
     .then((response) => response.json())
     .then((data) => {
-      // console.log(data);
+      console.log(data);
       if (data.length === 0) {
         window.alert('Nenhuma cidade encontrada');
       }
     });
 };
 
-export const getWeatherByCity = (/* cityURL */) => {
-//   seu código aqui
+export const getWeatherByCity = (cityURL) => {
+  return fetch(`http://api.weatherapi.com/v1/current.json?lang=pt&key=${TOKEN}&q=${cityURL}`)
+    .then((response) => response.json())
+    .then((data) => {
+      const { temp_c: temp, condition: { text: condition, icon } } = data.current;
+      return { temp, condition, icon };
+    });
 };

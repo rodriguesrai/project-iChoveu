@@ -117,9 +117,27 @@ export function handleSearch(event) {
   const searchInput = document.getElementById('search-input');
   const searchValue = searchInput.value;
   searchCities(searchValue)
-    .then((cidades) =>{
+    .then((cidades) => {
       const urlCidades = cidades.map((cidade) => cidade.url);
       const promiseCidades = urlCidades.map((cidade) => getWeatherByCity(cidade));
-      Promise.all(promiseCidades);
+      return Promise.all(promiseCidades);
+    })
+    .then((cityData) => {
+      console.log('cityData:', cityData);
+      const cityObjects = cityData.map((data) => ({
+        name: data.location.name,
+        country: data.location.country,
+        temp: data.current.temp_c,
+        condition: data.current.condition.text,
+        icon: data.current.condition.icon,
+        url: data.location.url,
+      }));
+
+      const cityElements = cityObjects.map((cityObject) => createCityElement(cityObject));
+
+      const citiesContainer = document.getElementById('cities');
+      cityElements.forEach((element) => {
+        citiesContainer.appendChild(element);
+      });
     });
 }

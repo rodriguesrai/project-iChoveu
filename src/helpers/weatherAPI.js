@@ -16,8 +16,7 @@ export const getWeatherByCity = (cityURL) => {
   return fetch(`http://api.weatherapi.com/v1/current.json?lang=pt&key=${TOKEN}&q=${cityURL}`)
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
-      const { temp_c: temp, condition: { text: condition, icon } } = data.current;
-      return { temp, condition, icon };
+      const { location, current } = data;
+      return { location, current };
     });
 };

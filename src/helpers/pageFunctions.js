@@ -1,4 +1,4 @@
-import { getWeatherByCity, searchCities } from './weatherAPI';
+import { getWeatherByCity, searchCities, TOKEN } from './weatherAPI';
 
 /**
  * Cria um elemento HTML com as informações passadas
@@ -77,7 +77,7 @@ export function showForecast(forecastList) {
  * Recebe um objeto com as informações de uma cidade e retorna um elemento HTML
  */
 export function createCityElement(cityInfo) {
-  const { name, country, temp, condition, icon /* , url */ } = cityInfo;
+  const { name, country, temp, condition, icon, url } = cityInfo;
 
   const cityElement = createElement('li', 'city');
 
@@ -98,11 +98,19 @@ export function createCityElement(cityInfo) {
   iconElement.src = icon.replace('64x64', '128x128');
 
   const infoContainer = createElement('div', 'city-info-container');
+  const createButton = createElement('button', 'button-class', 'Ver previsão');
+  createButton.addEventListener('click', () => {
+    const fetchURL = `http://api.weatherapi.com/v1/forecast.json?lang=pt&key=${TOKEN}&q=${url}&days=7`;
+    fetch(fetchURL)
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+  });
   infoContainer.appendChild(tempContainer);
   infoContainer.appendChild(iconElement);
 
   cityElement.appendChild(headingElement);
   cityElement.appendChild(infoContainer);
+  cityElement.appendChild(createButton);
 
   return cityElement;
 }
@@ -123,7 +131,6 @@ export function handleSearch(event) {
       return Promise.all(promiseCidades);
     })
     .then((cityData) => {
-      console.log('cityData:', cityData);
       const cityObjects = cityData.map((data) => ({
         name: data.location.name,
         country: data.location.country,
@@ -132,7 +139,7 @@ export function handleSearch(event) {
         icon: data.current.condition.icon,
         url: data.location.url,
       }));
-
+      console.log('entrada do cityInfo', cityObjects);
       const cityElements = cityObjects.map((cityObject) => createCityElement(cityObject));
 
       const citiesContainer = document.getElementById('cities');

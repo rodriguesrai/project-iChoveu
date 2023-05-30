@@ -103,7 +103,16 @@ export function createCityElement(cityInfo) {
     const fetchURL = `http://api.weatherapi.com/v1/forecast.json?lang=pt&key=${TOKEN}&q=${url}&days=7`;
     fetch(fetchURL)
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        const days = data.forecast.forecastday.map((day) => ({
+          date: day.date,
+          maxTemp: day.day.maxtemp_c,
+          minTemp: day.day.mintemp_c,
+          condition: day.day.condition.text,
+          icon: day.day.condition.icon,
+        }));
+        return showForecast(days);
+      });
   });
   infoContainer.appendChild(tempContainer);
   infoContainer.appendChild(iconElement);
@@ -137,7 +146,7 @@ export function handleSearch(event) {
         temp: data.current.temp_c,
         condition: data.current.condition.text,
         icon: data.current.condition.icon,
-        url: data.location.url,
+        url: data.cityURL,
       }));
       console.log('entrada do cityInfo', cityObjects);
       const cityElements = cityObjects.map((cityObject) => createCityElement(cityObject));

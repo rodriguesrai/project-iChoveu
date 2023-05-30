@@ -18,6 +18,6 @@ export const getWeatherByCity = (cityURL) => {
     .then((data) => {
       console.log(data);
       const { location, current } = data;
-      return { location, current };
+      return { location, current, cityURL };
     });
 };
